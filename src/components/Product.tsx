@@ -1,3 +1,10 @@
+import React from "react";
+import ProductInterface from "../models/ProductInterface";
+
+interface ProductProps extends ProductInterface {
+  onAddToCart: (id: string) => void;
+}
+
 export default function Product({
   id,
   image,
@@ -5,7 +12,7 @@ export default function Product({
   price,
   description,
   onAddToCart,
-}) {
+}: ProductProps) {
   return (
     <article className="product">
       <img src={image} alt={title} />

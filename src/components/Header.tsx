@@ -1,13 +1,21 @@
-import { useRef } from 'react';
-
+import React, { useRef } from 'react';
 import CartModal from './CartModal.jsx';
+import ShoppingCart from '../models/ShoppingCart.js';
 
-export default function Header({ cart, onUpdateCartItemQuantity }) {
-  const modal = useRef();
+interface HeaderProps {
+  cart: ShoppingCart;
+  onUpdateCartItemQuantity: (productId: string, amount: number) => void;
+}
+
+export default function Header({ cart, onUpdateCartItemQuantity }: HeaderProps) {
+  const modal = useRef(null);
 
   const cartQuantity = cart.items.length;
 
   function handleOpenCartClick() {
+    if (!modal.current) {
+      throw new Error('Modal ref is undefined');
+    }
     modal.current.open();
   }
 

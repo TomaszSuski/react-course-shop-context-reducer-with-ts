@@ -1,7 +1,7 @@
-export default interface Product {
+export default interface ProductInterface {
   id: string;
   title: string;
   price: number;
   description: string;
-  image: File;
+  image: any;
 }
