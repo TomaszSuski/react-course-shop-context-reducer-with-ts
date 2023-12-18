@@ -8,7 +8,7 @@ interface HeaderProps {
 }
 
 export default function Header({ cart, onUpdateCartItemQuantity }: HeaderProps) {
-  const modal = useRef(null);
+  const modal = useRef<any>(null);
 
   const cartQuantity = cart.items.length;
 
