@@ -1,4 +1,12 @@
-export default function Cart({ items, onUpdateItemQuantity }) {
+import React from "react";
+import CartItem from "../models/CartItem";
+
+interface CartProps {
+  items: CartItem[];
+  onUpdateItemQuantity: (id: string, quantity: number) => void;
+}
+
+export default function Cart({ items, onUpdateItemQuantity }: CartProps) {
   const totalPrice = items.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
