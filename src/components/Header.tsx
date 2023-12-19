@@ -3,7 +3,7 @@ import CartModal from "./CartModal.jsx";
 import ShoppingCartContext from "../store/shopping-cart-context.js";
 
 export default function Header() {
-  const { shoppingCart } = useContext(ShoppingCartContext);
+  const { shoppingCart, clearCart } = useContext(ShoppingCartContext);
   const modal = useRef<any>(null);
 
   const cartQuantity = shoppingCart.items.length;
@@ -20,6 +20,9 @@ export default function Header() {
   if (cartQuantity > 0) {
     modalActions = (
       <>
+        <button type="button" onClick={() => clearCart()}>
+          Clear Cart
+        </button>
         <button>Close</button>
         <button>Checkout</button>
       </>

@@ -1,6 +1,5 @@
-import React from "react";
+import React, { createContext } from "react";
 import ShoppingCart from "../models/ShoppingCart";
-import CartItem from "../models/CartItem";
 import ProductInterface from "../models/ProductInterface";
 import { DUMMY_PRODUCTS } from "../dummy-products";
 
@@ -15,7 +14,7 @@ interface ShoppingCartProviderProps {
   children: React.ReactNode;
 }
 
-const ShoppingCartContext = React.createContext<ShoppingCartContextModel>({
+const ShoppingCartContext = createContext<ShoppingCartContextModel>({
   shoppingCart: { items: [] },
   addItem: (id: string) => {},
   updateQuantity: (productId: string, amount: number) => {},
@@ -45,7 +44,9 @@ export function ShoppingCartProvider({
         };
         updatedItems[existingCartItemIndex] = updatedItem;
       } else {
-        const product = DUMMY_PRODUCTS.find((product: ProductInterface) => product.id === id);
+        const product = DUMMY_PRODUCTS.find(
+          (product: ProductInterface) => product.id === id
+        );
         updatedItems.push({
           id: id,
           name: product!.title,
@@ -90,9 +91,7 @@ export function ShoppingCartProvider({
   };
 
   return (
-    // istanbul ignore-next
     <ShoppingCartContext.Provider
-      // eslint-disable-next-line react/jsx-no-constructed-context-values
       value={{
         shoppingCart: cart,
         addItem: handleAddItemToCart,
