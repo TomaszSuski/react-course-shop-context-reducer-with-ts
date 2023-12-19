@@ -1,13 +1,9 @@
-import React from 'react';
-import { DUMMY_PRODUCTS } from '../dummy-products';
-import Product from './Product';
-import ProductInterface from '../models/ProductInterface';
+import React from "react";
+import { DUMMY_PRODUCTS } from "../dummy-products";
+import Product from "./Product";
+import ProductInterface from "../models/ProductInterface";
 
-interface ShopProps {
-  onAddItemToCart: (id: string) => void;
-}
-
-export default function Shop({ onAddItemToCart }: ShopProps) {
+export default function Shop() {
   return (
     <section id="shop">
       <h2>Elegant Clothing For Everyone</h2>
@@ -15,7 +11,7 @@ export default function Shop({ onAddItemToCart }: ShopProps) {
       <ul id="products">
         {DUMMY_PRODUCTS.map((product: ProductInterface) => (
           <li key={product.id}>
-            <Product {...product} onAddToCart={onAddItemToCart} />
+            <Product {...product} />
           </li>
         ))}
       </ul>

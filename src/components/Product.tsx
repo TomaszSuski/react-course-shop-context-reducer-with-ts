@@ -1,9 +1,6 @@
-import React from "react";
+import React, { useContext } from "react";
 import ProductInterface from "../models/ProductInterface";
-
-interface ProductProps extends ProductInterface {
-  onAddToCart: (id: string) => void;
-}
+import ShoppingCartContext from "../store/shopping-cart-context";
 
 export default function Product({
   id,
@@ -11,19 +8,20 @@ export default function Product({
   title,
   price,
   description,
-  onAddToCart,
-}: ProductProps) {
+}: ProductInterface) {
+  const { addItem } = useContext(ShoppingCartContext);
+
   return (
     <article className="product">
       <img src={image} alt={title} />
       <div className="product-content">
         <div>
           <h3>{title}</h3>
-          <p className='product-price'>${price}</p>
+          <p className="product-price">${price}</p>
           <p>{description}</p>
         </div>
-        <p className='product-actions'>
-          <button onClick={() => onAddToCart(id)}>Add to Cart</button>
+        <p className="product-actions">
+          <button onClick={() => addItem(id)}>Add to Cart</button>
         </p>
       </div>
     </article>

@@ -1,20 +1,16 @@
-import React, { useRef } from 'react';
-import CartModal from './CartModal.jsx';
-import ShoppingCart from '../models/ShoppingCart.js';
+import React, { useRef, useContext } from "react";
+import CartModal from "./CartModal.jsx";
+import ShoppingCartContext from "../store/shopping-cart-context.js";
 
-interface HeaderProps {
-  cart: ShoppingCart;
-  onUpdateCartItemQuantity: (productId: string, amount: number) => void;
-}
-
-export default function Header({ cart, onUpdateCartItemQuantity }: HeaderProps) {
+export default function Header() {
+  const { shoppingCart } = useContext(ShoppingCartContext);
   const modal = useRef<any>(null);
 
-  const cartQuantity = cart.items.length;
+  const cartQuantity = shoppingCart.items.length;
 
   function handleOpenCartClick() {
     if (!modal.current) {
-      throw new Error('Modal ref is undefined');
+      throw new Error("Modal ref is undefined");
     }
     modal.current.open();
   }
@@ -32,13 +28,7 @@ export default function Header({ cart, onUpdateCartItemQuantity }: HeaderProps) 
 
   return (
     <>
-      <CartModal
-        ref={modal}
-        cartItems={cart.items}
-        onUpdateCartItemQuantity={onUpdateCartItemQuantity}
-        title="Your Cart"
-        actions={modalActions}
-      />
+      <CartModal ref={modal} title="Your Cart" actions={modalActions} />
       <header id="main-header">
         <div id="main-title">
           <img src="logo.png" alt="Elegant model" />
