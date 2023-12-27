@@ -1,4 +1,4 @@
-import React, { createContext } from "react";
+import React, { createContext, useReducer } from "react";
 import ShoppingCart from "../models/ShoppingCart";
 import ProductInterface from "../models/ProductInterface";
 import { DUMMY_PRODUCTS } from "../dummy-products";
@@ -14,6 +14,16 @@ interface ShoppingCartProviderProps {
   children: React.ReactNode;
 }
 
+type ShoppingCartUpdatePayload = {
+  productId: string;
+  amount: number;
+};
+
+type ShoppingCartAction =
+  | { type: "ADD_ITEM"; payload: string }
+  | { type: "UPDATE_QUANTITY"; payload: ShoppingCartUpdatePayload }
+  | { type: "CLEAR_CART" };
+
 const ShoppingCartContext = createContext<ShoppingCartContextModel>({
   shoppingCart: { items: [] },
   addItem: (id: string) => {},
@@ -23,17 +33,15 @@ const ShoppingCartContext = createContext<ShoppingCartContextModel>({
 
 export default ShoppingCartContext;
 
-export function ShoppingCartProvider({
-  children,
-}: ShoppingCartProviderProps): React.ReactElement {
-  const [cart, setCart] = React.useState<ShoppingCart>({ items: [] });
-
-  function handleAddItemToCart(id: string) {
-    setCart((prevShoppingCart) => {
-      const updatedItems = [...prevShoppingCart.items];
-
+function shoppingCartReducer(
+  state: ShoppingCart,
+  action: ShoppingCartAction
+): ShoppingCart {
+  let updatedItems = [...state.items];
+  switch (action.type) {
+    case "ADD_ITEM":
       const existingCartItemIndex = updatedItems.findIndex(
-        (cartItem) => cartItem.id === id
+        (cartItem) => cartItem.id === action.payload
       );
       const existingCartItem = updatedItems[existingCartItemIndex];
 
@@ -45,10 +53,10 @@ export function ShoppingCartProvider({
         updatedItems[existingCartItemIndex] = updatedItem;
       } else {
         const product = DUMMY_PRODUCTS.find(
-          (product: ProductInterface) => product.id === id
+          (product: ProductInterface) => product.id === action.payload
         );
         updatedItems.push({
-          id: id,
+          id: action.payload,
           name: product!.title,
           price: product!.price,
           quantity: 1,
@@ -58,21 +66,17 @@ export function ShoppingCartProvider({
       return {
         items: updatedItems,
       };
-    });
-  }
 
-  function handleUpdateCartItemQuantity(productId: string, amount: number) {
-    setCart((prevShoppingCart) => {
-      const updatedItems = [...prevShoppingCart.items];
+    case "UPDATE_QUANTITY":
       const updatedItemIndex = updatedItems.findIndex(
-        (item) => item.id === productId
+        (item) => item.id === action.payload.productId
       );
 
       const updatedItem = {
         ...updatedItems[updatedItemIndex],
       };
 
-      updatedItem.quantity += amount;
+      updatedItem.quantity += action.payload.amount;
 
       if (updatedItem.quantity <= 0) {
         updatedItems.splice(updatedItemIndex, 1);
@@ -83,17 +87,38 @@ export function ShoppingCartProvider({
       return {
         items: updatedItems,
       };
-    });
+    case "CLEAR_CART":
+      return {
+        items: [],
+      };
+    default:
+      return state;
+  }
+}
+
+export function ShoppingCartProvider({
+  children,
+}: ShoppingCartProviderProps): React.ReactElement {
+  const [shoppingCart, dispatch] = useReducer(shoppingCartReducer, {
+    items: [],
+  });
+
+  function handleAddItemToCart(id: string) {
+    dispatch({ type: "ADD_ITEM", payload: id });
+  }
+
+  function handleUpdateCartItemQuantity(productId: string, amount: number) {
+    dispatch({ type: "UPDATE_QUANTITY", payload: { productId, amount } });
   }
 
   const clearCartHandler = () => {
-    setCart({ items: [] });
+    dispatch({ type: "CLEAR_CART" });
   };
 
   return (
     <ShoppingCartContext.Provider
       value={{
-        shoppingCart: cart,
+        shoppingCart: shoppingCart,
         addItem: handleAddItemToCart,
         updateQuantity: handleUpdateCartItemQuantity,
         clearCart: clearCartHandler,
